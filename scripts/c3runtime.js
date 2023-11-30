@@ -1069,7 +1069,7 @@ gl.COLOR_ATTACHMENT0,gl.TEXTURE_2D,null,0)}this._renderer.DeleteTexture(this._te
 null);if(this._renderer.GetWebGLVersionNumber()>=2){gl.bindFramebuffer(gl.READ_FRAMEBUFFER,null);gl.bindFramebuffer(gl.DRAW_FRAMEBUFFER,null)}gl.deleteFramebuffer(this._frameBuffer);if(this._depth)gl.deleteFramebuffer(this._frameBufferNoDepth);const batchState=this._renderer.GetBatchState();batchState.currentFramebuffer=null;batchState.currentFramebufferNoDepth=null;this._frameBuffer=null}_CalculateProjection(){this._renderer.CalculatePerspectiveMatrix(this._projectionMatrix,this._width/this._height);
 this._lastFov=this._renderer.GetFovY();this._lastNearZ=this._renderer.GetNearZ();this._lastFarZ=this._renderer.GetFarZ()}_GetFramebuffer(){return this._frameBuffer}_GetFramebufferNoDepth(){return this._frameBufferNoDepth}GetRenderer(){return this._renderer}GetTexture(){return this._texture}GetProjectionMatrix(){if(this._renderer.GetFovY()!==this._lastFov||this._renderer.GetNearZ()!==this._lastNearZ||this._renderer.GetFarZ()!==this._lastFarZ)this._CalculateProjection();return this._projectionMatrix}IsLinearSampling(){return this._sampling!==
 "nearest"}HasAlpha(){return this._alpha}IsSampled(){return this._isSampled}HasDepthBuffer(){return this._depth}GetWidth(){return this._width}GetHeight(){return this._height}IsDefaultSize(){return this._isDefaultSize}GetMultisampling(){return this._multisampling}GetOptions(){const ret={sampling:this._sampling,alpha:this._alpha,isSampled:this._isSampled};if(!this._isDefaultSize){ret.width=this._width;ret.height=this._height}return ret}IsCompatibleWithOptions(opts){opts=Object.assign({},DEFAULT_RENDERTARGET_OPTIONS,
-opts);if(opts.sampling!=="nearest"!==this.IsLinearSampling())return false;if(!!opts.alpha!==this.HasAlpha())return false;if(!!opts.depth!==this.HasDepthBuffer())return false;if(this._renderer.GetWebGLVersionNumber()>=2)if(!!opts.isSampled!==this.IsSampled())return false;if(typeof opts.width==="number"||typeof opts.height==="number")return!this.IsDefaultSize()&&this.GetWidth()===opts.width&&this.GetHeight()===opts.height;else return this.IsDefaultSize()}_GetWebGLTexture(){if(!this._texture)return null;
+opts);if(opts.sampling!=="nearest"!==this.IsLinearSampling())return false;if(!!opts.alpha!==this.HasAlpha())return false;if(!!opts.depth!==this.HasDepthBuffer())return false;if(this._renderer.GetWebGLVersionNumber()>=2)if(!!opts.isSampled!==this.IsSampled())return false;if(typeof opts.width==="number"||typeof opts.height==="number")return!this.IsDefaultSize()&&this.GetWidth()===Math.floor(opts.width)&&this.GetHeight()===Math.floor(opts.height);else return this.IsDefaultSize()}_GetWebGLTexture(){if(!this._texture)return null;
 return this._texture._GetTexture()}GetEstimatedMemoryUsage(){if(this._texture)return this._texture.GetEstimatedMemoryUsage();return this._width*this._height*(this._alpha?4:3)}static async DebugReadPixelsToBlob(renderer,renderTarget){const imageData=await renderer.ReadBackRenderTargetToImageData(renderTarget,true);return await C3.ImageDataToBlob(imageData)}static OnContextLost(){allRenderTargets.clear()}static allRenderTargets(){return allRenderTargets.values()}static ResizeAll(width,height){for(const rt of allRenderTargets)if(rt.IsDefaultSize())rt._Resize(width,
 height)}};
 
@@ -4144,6 +4144,7 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.Sprite.Acts.SetOpacity,
 		C3.Plugins.System.Acts.SetVar,
 		C3.Plugins.Sprite.Acts.SetAnimSpeed,
+		C3.Plugins.Audio.Acts.SetSilent,
 		C3.Behaviors.DragnDrop.Cnds.OnDragStart,
 		C3.Plugins.Sprite.Exps.X,
 		C3.Plugins.Sprite.Exps.Y,
@@ -4224,7 +4225,8 @@ self.C3_JsPropNameTable = [
 	{baslangicY: 0},
 	{baslangicX: 0},
 	{sol: 0},
-	{sag: 0}
+	{sag: 0},
+	{sesAyar: 0}
 ];
 
 self.InstanceType = {
@@ -4395,8 +4397,9 @@ self.C3_ExpressionFuncs = [
 		() => "close",
 		() => 40,
 		() => 100,
-		() => 0.15,
+		() => 0.25,
 		() => "bos",
+		() => 0.4,
 		p => {
 			const n0 = p._GetNode(0);
 			return () => n0.ExpObject();
